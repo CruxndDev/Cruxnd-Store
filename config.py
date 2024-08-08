@@ -10,7 +10,8 @@ class Config:
     def init_app(app):
         pass
 
-class DevelopmentConfig(Config): pass
+class DevelopmentConfig(Config): 
+    SQLALCHEMY_DATABASE_URI = os.getenv("DEV_DATABASE_URI")
 
 class ProductionConfig(Config): pass
 
