@@ -1,0 +1,393 @@
+openapi: 3.0.0
+info:
+  title: Cruxnd Store API
+  description: An API Built for the cruxnd store
+  contact:
+    name: Cruxnd-Dev
+    url: 'https://www.github.com/Ezek-iel'
+    email: ezekielakinfenwa98@gmail.com
+  version: 1.0.0
+servers:
+  - url: 'http://127.0.0.1:5000/api/v1'
+    description: development server url
+tags:
+  - name: users
+    description: Operations related to users
+  - name: products
+    description: Operations related to products
+  - name: carts
+    description: Operations related to carts
+paths:
+  /users:
+    GET:
+      tags: users
+      operationID: getUsers
+      parameters:
+  
+        -name: username
+        in: query
+        required: false
+        schema:
+          type: string
+
+        -name: email_address
+        in: query
+        required: false
+        schema:
+          type: email
+      
+      responses:
+        
+        200:
+          description: returns a list of users 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductListSchema'
+        
+        404: 
+          description:  Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    POST:
+      tags: users
+      operationID: createUser
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserSchema'
+  
+  /users/{userID}:
+    GET:
+      tags: users
+      operationID: getUser
+      response:
+        200:
+          description: Resource Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserItemSchema'
+        
+        404:
+          description: Resource not found
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Error'
+
+    DELETE:
+      tags: users
+      operationID: deleteUser
+      response:
+        204:
+          descriprion: Resource Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+    
+    PUT:
+      tags: users
+      operationID: updateUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductSchema'
+
+      response:
+        200:
+          description: Resource Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserItemSchema'
+        
+        404:
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /auth/login:
+    POST:
+      tags: users
+      operationID: loginUser
+      response:
+        200:
+          description: Succesfully logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginSuccessful'
+        
+        400:
+          description: Malformed Request #! I am not sure of the error code yet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /user/{userID}/carts:
+    POST:
+      tags: users, carts
+      operationID: createCart
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCartItemSchema'
+      
+      response:
+        200:
+          description: Resource Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItemSchema'
+      
+  
+  /users/{userID}/carts/{cartID}:
+    GET:
+      tags: users, carts
+      operationID: getUserCart
+      response:
+        200:
+          description: Resource Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItemSchema'
+        
+        404:
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /products:
+    GET:
+      tags: products
+      operationID: getProducts
+      parameters:
+  
+        -name: name
+        in: query
+        required: false
+        schema:
+          type: string
+      
+      responses:
+        
+        200:
+          description: returns a list of products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductListSchema'
+        
+        404: 
+          description:  Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    POST:
+      tags: products
+      operationID: addProduct
+      
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductItemSchema'
+      
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+  
+  /product/{productID}:
+    GET:
+      tags: products
+      operationID: getProduct
+      response:
+        200:
+          description: Resource Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductItemSchema'
+        
+        404:
+          description: Resource not found
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Error'
+
+    DELETE:
+      tags: products
+      operationID: deleteProduct
+      response:
+        204:
+          descriprion: Resource Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+    
+    PUT:
+      tags: products
+      operationID: updateProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductItemSchema'
+      response:
+        200:
+          description: Resource Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductItemSchema'
+        
+        404:
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      type: object
+      properties: 
+        message:
+          type: string
+    
+    Success:
+      type: object
+      properties:
+        message:
+          type: string
+    
+    LoginSuccesful:
+      type: object
+      properties:
+        message:
+          type: string
+        auth_token:
+          type: password
+    
+    CreateProductItemSchema:
+      type: object
+      properties:
+        name:
+          type: string
+        price:
+          type: float  
+        
+    CreateUserItemSchema:
+      type: object
+      properties:
+        username:
+          type: string
+        email_address:
+          type: email
+        password:
+          type: password
+        age:
+          type: short
+        gender:
+          type: string
+          enum:
+            - male
+            - female
+    
+    ProductItemSchema:
+      type: object
+      allOf:
+        schema: CreateProductItemSchema
+      properties:
+        productID:
+          type: string
+        created:
+          type: datetime
+        updated:
+          type: datetime
+        is_bought:
+          type: boolean
+    
+    UserItemSchema:
+      type: object
+      allOf:
+        $ref: '#/CreateUserItemSchema'
+      properties:
+        productID:
+          type: string
+        created:
+          type: datetime
+        last_online:
+          type: datetime
+    
+    UserListSchema:
+      type: array
+      items:
+        $ref: '#/UserItemSchema'
+    
+    ProductListSchema:
+      type: array
+      items:
+        $ref: '#/ProductItemSchema'
+    
+    CreateCartItemSchema:
+      type: object
+      properties:
+        item:
+          type:
+            $ref : '#/ProductListSchema'
+    
+    CartItemSchema:
+      type: object
+      properties:
+        item:
+          type:
+            $ref: '#/ProductListSchema'
+        owner:
+          type: string
+        created:
+          type: datetime
+
+security:
+   - bearerAuth:
+     - deleteUser
+     - updateUser
+     - createUser
+     - getUserCart
+     - addProduct
+     - deleteProduct
+     - updateProduct
