@@ -1,15 +1,16 @@
 import unittest
 import sys, os
-from sqlalchemy.orm.collections import InstrumentedList
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) #* Adding the tests to path so that it can see the app
+
+from sqlalchemy.orm.collections import InstrumentedList
+
 from app.models import User, Product, Cart, Seller, generate_user_id
 
-u1 = User(username = "John", email_address = "john@doe.com", age = 30, gender = "Male", password = "12345678") #type: ignore
-p1= Product(name = "Samsung Wink 20", price = 400.50) #type:ignore
+u1 = User(username = "John", email_address = "john@doe.com", age = 30, gender = "Male", password = "12345678") 
+p1= Product(name = "Samsung Wink 20", price = 400.50) 
 products = ["Phone","Tablet","Laptop","PC","Fish"]
 s1 = Seller.from_user(u1)
-
-c1 = Cart(name = "myCart", products_list = products, creator = u1) #type: ignore
+c1 = Cart(name = "myCart", products_list = products, creator = u1) 
 
 class TestUtilities(unittest.TestCase):
 

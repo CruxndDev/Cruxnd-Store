@@ -27,4 +27,9 @@ def create_app(config_name = os.getenv('FLASK_CONFIG') or 'default'):
     config[config_name].init_app(app)
 
     database.init_app(app)
-    return
+
+    from .v1 import api_blueprint
+    app.register_blueprint(api_blueprint, url_prefix = "/v1")
+    
+    from app import models, schemas
+    return app

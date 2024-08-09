@@ -2,6 +2,7 @@
 * Models file for store api to handle database structure
 """
 
+# TODO Fix Typing annotations for models and install mypy
 from datetime import datetime
 from uuid import uuid4
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -59,7 +60,7 @@ class Seller(User, database.Model): #? Not sure the inheritance will work
 
     @property
     def products_list(self):
-        return self.products.split(',')[1:]
+        return self.products.split(',')
 
     @products_list.setter
     def products_list(self, value):
@@ -74,7 +75,7 @@ class Seller(User, database.Model): #? Not sure the inheritance will work
     @staticmethod
     def from_user(user: User) -> "Seller":
         new_seller = Seller(username = user.username, email_address = user.email_address, \
-                            age = user.age, gender = user.gender, products_list = []) #type: ignore
+                            age = user.age, gender = user.gender, products_list = [])  
         return new_seller
 
 class Cart(database.Model):
