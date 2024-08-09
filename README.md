@@ -1,6 +1,6 @@
 # Cruxnd Store API 🌐
 
-VividBlog is a versatile Ecommerce API implemented using **REST** principles and the Flask-RESTful package. It provides a robust foundation for building dynamic and interactive Ecommerce platforms.
+Cruxnd Store API is a versatile Ecommerce API implemented using **REST** principles and the Flask-RESTful package. It provides a robust foundation for building dynamic and interactive Ecommerce platforms.
 
 ## Features
 
