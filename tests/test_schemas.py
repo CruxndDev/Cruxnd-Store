@@ -20,7 +20,7 @@ class TestCreateUserSchema(unittest.TestCase):
         self.user = self.user_schema.load(self.sample_user_data)
     
     def test_user_is_User(self):
-        self.assertEqual(type(self.user), User)
+        self.assertIsInstance(self.user, User)
     
 class TestCreateProductSchema(unittest.TestCase):
 
@@ -33,7 +33,7 @@ class TestCreateProductSchema(unittest.TestCase):
         self.product = self.product_schema.load(self.sample_product_data)
     
     def test_product_is_Product(self):
-        self.assertEqual(type(self.product), Product)
+        self.assertIsInstance(self.product, Product)
 
 class TestCreateCartSchema(unittest.TestCase):
 
@@ -45,7 +45,7 @@ class TestCreateCartSchema(unittest.TestCase):
         self.cart = self.cart_schema.load(self.sample_cart_data)
     
     def test_cart_is_Cart(self):
-        self.assertEqual(type(self.cart), Cart)
+        self.assertIsInstance(self.cart, Cart)
     
     def test_cart_product_data(self):
         self.assertEqual(self.cart.products, 'iphone 15,Samsung 60')
@@ -58,7 +58,7 @@ class TestUserItemSchema(unittest.TestCase):
         self.user_dict = self.user_schema.dump(self.user)
     
     def test_user_dict_is_Dict(self):
-        self.assertEqual(type(self.user_dict), dict)
+        self.assertIsInstance(self.user_dict, dict)
     
     def test_user_dict_is_correct(self):
         #! This test is not working because of datetime issues. Please cross check it
@@ -74,7 +74,7 @@ class TestProductItemSchema(unittest.TestCase):
     
     def test_product_dict_is_Dict(self):
         print(self.product_dict)
-        self.assertEqual(type(self.product_dict), dict)
+        self.assertIsInstance(self.product_dict, dict)
     
     def test_product_dict_is_correct(self):
         result = {'name': 'Iphone 12', 'price': 3000.0, 'id': 'Hey', 'created': None, 'updated': None, 'is_bought': False}
@@ -94,7 +94,7 @@ class TestCartItemSchema(unittest.TestCase):
         self.cart_dict = self.cart_schema.dump(self.cart)
     
     def test_cart_dict_is_Dict(self):
-        self.assertEqual(type(self.cart_dict), dict)
+        self.assertIsInstance(self.cart_dict, dict)
     
     def test_cart_dict_is_correct(self):
         result = {'products_list': ['Iphone 12', 'Samsung S20 Ultra']}
@@ -108,7 +108,7 @@ class TestSellerItemSchema(unittest.TestCase):
         self.seller_dict = self.seller_schema.dump(self.seller)
     
     def test_seller_dict_is_Dict(self):
-        self.assertEqual(type(self.seller_dict), dict)
+        self.assertIsInstance(self.seller_dict, dict)
     
     def test_seller_dict_is_correct(self):
         result =  {'username': None, 'email_address': None, 'age': None, 'gender': None, 'id': None, 'created': None, 'products_list': ['Iphone 12', 'Samsung S20 Ultra']}

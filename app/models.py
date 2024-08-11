@@ -16,13 +16,13 @@ class User(database.Model):
     """
     A User in the cruxnd store
     """
-    id: str = database.Column(database.String(36), primary_key = True, default = generate_user_id)
-    password_hash: str = database.Column(database.String(128))
-    username: str = database.Column(database.String(50), nullable = False)
-    email_address: str = database.Column(database.String(100), nullable = False)
-    age: int = database.Column(database.Integer(), nullable = False)
-    gender: str = database.Column(database.String(10), nullable = False)
-    created: datetime = database.Column(database.DateTime(), default = datetime.now)
+    id = database.Column(database.String(36), primary_key = True, default = generate_user_id)
+    password_hash = database.Column(database.String(128))
+    username = database.Column(database.String(50), nullable = False)
+    email_address = database.Column(database.String(100), nullable = False)
+    age = database.Column(database.Integer(), nullable = False)
+    gender = database.Column(database.String(10), nullable = False)
+    created= database.Column(database.DateTime(), default = datetime.now)
     seller = database.relationship('Seller', backref = 'user')
     carts = database.relationship('Cart', backref = 'user')
     products_bought = database.relationship('Product', backref = 'user')
@@ -40,13 +40,14 @@ class User(database.Model):
 
 
 class Product(database.Model):
-    id: str = database.Column(database.String(36), primary_key = True, default = generate_user_id)
-    name: str = database.Column(database.String(200), nullable = False)
-    price: float = database.Column(database.Float(), nullable = False)
-    created: datetime = database.Column(database.DateTime(), default = datetime.now)
-    updated: datetime = database.Column(database.DateTime(), nullable = True)
-    is_bought: bool = database.Column(database.Boolean(), default = False)
-    buyer: str | User | None = database.Column(database.ForeignKey('user.id'), nullable = True)
+    id = database.Column(database.String(36), primary_key = True, default = generate_user_id)
+    name = database.Column(database.String(200), nullable = False)
+    price = database.Column(database.Float(), nullable = False)
+    created = database.Column(database.DateTime(), default = datetime.now)
+    updated = database.Column(database.DateTime(), nullable = True)
+    is_bought = database.Column(database.Boolean(), default = False)
+    buyer = database.Column(database.ForeignKey('user.id'), nullable = True)
+    seller= database.Column(database.String(400), database.ForeignKey('seller.id'))
 
     def buy(self, customer: User):
         self.is_bought = True
@@ -54,9 +55,10 @@ class Product(database.Model):
 
 class Seller(User, database.Model): #? Not sure the inheritance will work
 
-    id: str = database.Column(database.String(36), primary_key = True, default = generate_user_id)
-    products: str = database.Column(database.String(600), nullable = False)
+    id = database.Column(database.String(36), primary_key = True, default = generate_user_id)
+    products = database.Column(database.String(600), nullable = False)
     userid = database.Column(database.String(), database.ForeignKey('user.id'))
+    products_sold = database.relationship('Product', backref = 'product_seller')
 
     @property
     def products_list(self):
@@ -79,10 +81,10 @@ class Seller(User, database.Model): #? Not sure the inheritance will work
         return new_seller
 
 class Cart(database.Model):
-    id: str = database.Column(database.String(60), primary_key = True, default = generate_user_id)
-    name: str = database.Column(database.String(60), nullable = False)
-    products: str = database.Column(database.String(600), default = '')
-    creator: str | User | None = database.Column(database.String(400), \
+    id = database.Column(database.String(60), primary_key = True, default = generate_user_id)
+    name = database.Column(database.String(60), nullable = False)
+    products = database.Column(database.String(600), default = '')
+    creator = database.Column(database.String(400), \
                                                  database.ForeignKey('user.id'))
     @property
     def products_list(self) -> list[str]:

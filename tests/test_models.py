@@ -37,10 +37,10 @@ class TestUser(unittest.TestCase):
             u1.password
     
     def test_user_has_cart(self):
-        self.assertEqual(type(u1.carts), InstrumentedList) #* From sqlalchemy
+        self.assertIsInstance(u1.carts, InstrumentedList) #* From sqlalchemy
     
     def test_user_buys_product(self):
-        self.assertEqual(type(u1.products_bought), InstrumentedList)
+        self.assertIsInstance(u1.products_bought, InstrumentedList)
         
     def test_users_different_password(self):
         u2 = User(username = "John", email_address = "john@doe.com", age = 30, gender = "Male", password = "12345678") #* #type: ignore make sure two users with the same details dont have the same passwrord
@@ -67,7 +67,8 @@ class TestProduct(unittest.TestCase):
         self.assertTrue(p1.is_bought)
     
     def test_product_has_buyer(self):
-        self.assertEqual(type(p1.buyer), type(u1))
+        #! Not really sure about this test
+        self.assertIsInstance(p1.buyer, User)
 
 class TestSeller(unittest.TestCase):
 
@@ -90,7 +91,7 @@ class TestSeller(unittest.TestCase):
         self.assertEqual(s1.products.split(',')[-1], "Hey")
     
     def test_seller_from_user(self):
-        self.assertEqual(type(s1), Seller)
+        self.assertIsInstance(s1, Seller)
 
 class TestCart(unittest.TestCase):
 
@@ -101,5 +102,5 @@ class TestCart(unittest.TestCase):
         self.assertEqual(c1.products , 'Phone,Tablet,Laptop,PC,Fish', )
     
     def test_cart_has_creator(self):
-        self.assertEqual(type(c1.creator), User)
+        self.assertIsInstance(c1.creator, User)
         
