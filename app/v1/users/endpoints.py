@@ -1,4 +1,5 @@
 from ...v1 import api
-from .resources import HelloUsers
+from .resources import UserItemResource, UserListResource
 
-api.add_resource(HelloUsers, "/users")
+api.add_resource(UserListResource, '/users')
+api.add_resource(UserItemResource, '/users/<string:userid>')

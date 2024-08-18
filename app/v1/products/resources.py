@@ -7,6 +7,7 @@ from app import cache
 from marshmallow import ValidationError
 
 
+#TODO Remove the initialization of schema variables
 SUCCESS_RESPONSE = {"message" : "Operation Successful"}
 NOT_FOUND = {"message" : "Resource not found"}
 
@@ -77,6 +78,9 @@ class ProductItemResource(Resource):
 
     def post(self, productid):
         buyer_id = request.args.get('buyer')
+        if not buyer_id:
+            abort(401, {'message' : 'Enter a buyerid query parameter'})
+
         if not User.query.get(buyer_id):
             abort(404, NOT_FOUND)
 
