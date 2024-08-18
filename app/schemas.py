@@ -1,5 +1,10 @@
-from marshmallow import Schema, fields, post_load
+from marshmallow import Schema, fields, post_load, post_dump
 from .models import Cart, Product, Seller, User
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+SERVER_URL = os.getenv('SERVER_URL')
 
 class CreateUserSchema(Schema):
     username = fields.String(required = True)
@@ -31,6 +36,16 @@ class ProductItemSchema(CreateProductSchema, Schema):
     created = fields.DateTime(required = True, dump_only = True)
     updated = fields.DateTime(required = True, dump_only = True)
     is_bought = fields.Boolean(required = True, dump_only = True)
+    buyer = fields.String(required = False)
+    
+    @post_dump
+    def make_product_items(self, mapping, **kwargs):
+        if mapping['is_bought']:
+            mapping['buyer'] = '{0}users/{1}'.format(SERVER_URL, mapping['buyer'])
+        
+        mapping['url'] = '{0}products/{1}'.format(SERVER_URL, mapping['id'])
+        return mapping
+
 
 class SellerItemSchema(UserItemSchema, Schema):
     balance = fields.String(required = True)

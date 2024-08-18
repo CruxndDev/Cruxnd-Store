@@ -5,6 +5,7 @@ import os
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_caching import Cache
 
 from dotenv import load_dotenv
 from config import config
@@ -12,6 +13,7 @@ from config import config
 load_dotenv()
 
 database = SQLAlchemy()
+cache = Cache()
 
 def create_app(config_name = os.getenv('FLASK_CONFIG') or 'default'):
     """
@@ -24,9 +26,10 @@ def create_app(config_name = os.getenv('FLASK_CONFIG') or 'default'):
 
     app = Flask(__name__)
     app.config.from_object(config[config_name])
-    config[config_name].init_app(app)
+    config[config_name].init_app(app)    
 
     database.init_app(app)
+    cache.init_app(app)
 
     from .v1 import api_blueprint
     app.register_blueprint(api_blueprint, url_prefix = "/v1")

@@ -55,10 +55,10 @@ def create_products():
 
         try:
             seller = generate_random_seller()
-            seller.add_product(new_product.id)
-            new_product.seller = seller.id
             database.session.add(new_product)
             database.session.commit()
+            seller.add_product(new_product.id)
+            new_product.seller = seller.id
             count += 1 
         except IntegrityError as err:
             print(err._message)
@@ -79,4 +79,3 @@ def create_carts():
             print(err._message)
             database.session.rollback()
             continue
-
