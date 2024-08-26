@@ -2,31 +2,32 @@ from datetime import datetime
 from flask import abort, request
 from flask_restful import Resource
 from marshmallow import ValidationError
-from ...schemas import  CreateUserSchema, UserItemSchema
+from ...schemas import CreateUserSchema, UserItemSchema
 from ...models import User, database
 
-SUCCESS_RESPONSE = {"message" : "Operation Successful"}
-NOT_FOUND = {"message" : "Resource not found"}
+SUCCESS_RESPONSE = {"message": "Operation Successful"}
+NOT_FOUND = {"message": "Resource not found"}
+
 
 class UserListResource(Resource):
 
     def get(self):
-        
-        #* 127.0.0.1:5000/users?name=john&email=john@doe.com
+
+        # * 127.0.0.1:5000/users?name=john&email=john@doe.com
 
         query = User.query
-        name = request.args.get('name')
-        email = request.args.get('email')
+        name = request.args.get("name")
+        email = request.args.get("email")
 
         if name:
-            query = query.filter(User.username.like(f'%{name}%'))
-        
+            query = query.filter(User.username.like(f"%{name}%"))
+
         if email:
-            query = query.filter(User.email_address.like(f'%{email}%'))
-        
+            query = query.filter(User.email_address.like(f"%{email}%"))
+
         all_users = [UserItemSchema().dump(user) for user in query.all()]
-        return {'users' : all_users}
-    
+        return {"users": all_users}
+
     def post(self):
 
         try:
@@ -34,16 +35,17 @@ class UserListResource(Resource):
             database.session.add(new_user)
             database.session.commit()
             return SUCCESS_RESPONSE, 201
-        
+
         except ValidationError as err:
             return err.messages, 401
+
 
 class UserItemResource(Resource):
 
     def get(self, userid):
         user = User.query.get_or_404(userid)
-        return {"user" : UserItemSchema().dump(user)}
-    
+        return {"user": UserItemSchema().dump(user)}
+
     def put(self, userid):
         user_to_update = User.query.get_or_404(userid)
 
@@ -57,7 +59,7 @@ class UserItemResource(Resource):
             return SUCCESS_RESPONSE, 200
         except ValidationError as err:
             abort(400, err.messages)
-    
+
     def delete(self, userid):
         user_to_delete = User.query.get_or_404(userid)
         database.session.delete(user_to_delete)

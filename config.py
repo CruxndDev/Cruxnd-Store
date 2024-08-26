@@ -17,10 +17,13 @@ class DevelopmentConfig(Config):
     CACHE_REDIS_PORT = os.getenv("CACHE_REDIS_PORT")
     CACHE_REDIS_TIMEOUT = os.getenv("CACHE_REDIS_TIMEOUT")
 
+class TestingConfig(Config):
+    SQLALCHEMY_DATABASE_URI = os.getenv("TESTING_DATABASE_URI")
 
 class ProductionConfig(Config): pass
 
 config = {
+    'testing' : TestingConfig,
     'development': DevelopmentConfig,
     'production': ProductionConfig,
     'default': DevelopmentConfig
