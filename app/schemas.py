@@ -51,19 +51,20 @@ class ProductItemSchema(CreateProductSchema, Schema):
 
 
 class SellerItemSchema(UserItemSchema, Schema):
-    products_list = fields.List(fields.String(), required=True, dump_only=True)
+    products = fields.List(fields.String(), required=True, dump_only=True)
 
     @post_dump
     def make_product_number(self, mapping, **kwargs):
-        mapping["products_number"] = len(mapping["products_list"])
-        mapping["products_url"] = [
-            {key: f"{SERVER_URL}/products/{key}"} for key in mapping["products_list"]
-        ]
+        if mapping["products"]:
+            mapping["products_number"] = len(mapping["products"])
+            mapping["products_url"] = [
+                f"{SERVER_URL}/products/{product}" for product in mapping["products"]
+            ]
         return mapping
 
 
 class CreateCartSchema(Schema):
-    products_list = fields.List(fields.String(), required=True)
+    products = fields.List(fields.String(), required=True)
 
     @post_load
     def make_cart(self, data, **kwargs):
@@ -73,3 +74,11 @@ class CreateCartSchema(Schema):
 class CartItemSchema(CreateCartSchema, Schema):
     owner = fields.String(required=True)
     created = fields.DateTime(dump_only=True)
+
+    @post_dump
+    def make_cart(self, mapping, **kwargs):
+        mapping["products_url"] = [
+            f"{SERVER_URL}/products/{product}" for product in mapping["products"]
+        ]
+        mapping.pop("products")
+        return mapping

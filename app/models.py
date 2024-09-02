@@ -4,10 +4,34 @@
 
 from datetime import datetime
 from uuid import uuid4
+import psycopg2
+import os
 from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
 
 from app import database
 
+load_dotenv()
+
+def add_productid(table, productid):
+        table_name = table.__tablename__
+        connection = psycopg2.connect(
+            user = os.getenv("DEV_DATABASE_USER"),
+            password=os.getenv("DEV_DATABASE_PASSWORD"),
+            database=os.getenv("DEV_DATABASE"),
+        )
+
+        cursor = connection.cursor()
+
+        update_query = """
+            UPDATE {0} SET products = array_append(products, '{1}') WHERE id = '{2}' 
+        """.format(
+            table_name, productid, table.id
+        )
+        print(update_query)
+        cursor.execute(update_query)
+        connection.commit()
+        connection.close()
 
 def generate_user_id():
     return str(uuid4())
@@ -46,7 +70,7 @@ class User(database.Model):
 
 class Product(database.Model):
 
-    __tablename__ = 'products'
+    __tablename__ = "products"
     id = database.Column(
         database.String(36), primary_key=True, default=generate_user_id
     )
@@ -67,28 +91,14 @@ class Product(database.Model):
 
 
 class Seller(User, database.Model):  # ? Not sure the inheritance will work
-    __tablename__ = 'sellers'
+    __tablename__ = "sellers"
     id = database.Column(
         database.String(36), primary_key=True, default=generate_user_id
     )
-    products = database.Column(database.String(6000), nullable=False)
+    products = database.Column(database.ARRAY(database.String), default=[])
     balance = database.Column(database.Integer(), nullable=False, default=0)
     userid = database.Column(database.String(), database.ForeignKey("users.id"))
     products_sold = database.relationship("Product", backref="product_seller")
-
-    @property
-    def products_list(self):
-        return self.products.split(",")
-
-    @products_list.setter
-    def products_list(self, value):
-        self.products = ",".join(value)
-
-    def add_product(self, product):
-        if self.products:
-            self.products += f",{product}"
-        else:
-            self.products += product
 
     @staticmethod
     def from_user(user: User) -> "Seller":
@@ -97,31 +107,15 @@ class Seller(User, database.Model):  # ? Not sure the inheritance will work
             email_address=user.email_address,
             age=user.age,
             gender=user.gender,
-            products_list=[],
         )
         return new_seller
 
-
 class Cart(database.Model):
 
-    __tablename__ = 'carts'
+    __tablename__ = "carts"
     id = database.Column(
         database.String(60), primary_key=True, default=generate_user_id
     )
     name = database.Column(database.String(200), nullable=False)
-    products = database.Column(database.String(6000), default="")
+    products = database.Column(database.ARRAY(database.String), default=[])
     creator = database.Column(database.String(600), database.ForeignKey("users.id"))
-
-    @property
-    def products_list(self) -> list[str]:
-        return self.products.split(",")
-
-    @products_list.setter
-    def products_list(self, value):
-        self.products = ",".join(value)
-
-    def add_product(self, product):
-        if self.products:
-            self.products += f",{product}"
-        else:
-            self.products += product

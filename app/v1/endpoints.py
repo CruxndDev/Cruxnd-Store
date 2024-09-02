@@ -3,7 +3,6 @@ from ..v1 import api_blueprint, SUCCESS_RESPONSE
 from flask import jsonify
 
 # * Controler Resources
-# FIXME Do something important here
 @api_blueprint.route("/sellers/<string:sellerid>/withdraw")
 def withdraw(sellerid):
     seller_to_retrieve = Seller.query.get_or_404(sellerid)

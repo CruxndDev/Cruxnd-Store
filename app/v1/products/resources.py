@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import NoReturn
 from flask import request, abort
 from flask_restful import Resource
-from ...models import Product, database, User
+from ...models import Product, Seller, database, User, add_productid
 from ...schemas import ProductItemSchema, CreateProductSchema
 from app import cache
 from marshmallow import ValidationError
@@ -11,13 +11,13 @@ SUCCESS_RESPONSE = {"message": "Operation Successful"}
 NOT_FOUND = {"message": "Resource not found"}
 
 
-def check_seller() -> NoReturn | str:
+def check_seller() -> NoReturn | Seller:
     seller_id = request.args.get('sellerid')
-
+    
     if not seller_id:
         abort(401, {'message' : "seller id is missing"})
     else:
-        return seller_id
+        return Seller.query.get_or_404(seller_id)
         
 class ProductsListResource(Resource):
 
@@ -27,32 +27,41 @@ class ProductsListResource(Resource):
         isBought = request.args.get("isBought", type=bool)
         minimum_price = request.args.get("min")
         maximum_price = request.args.get("max")
+        current_page = request.args.get('currentPage', type = int, default = 1)
+        items_per_page = request.args.get('itemsPerPage', type = int, default = 10)
 
         query = Product.query
 
         if name:
             query = query.filter(Product.name.like(f"%{name}%"))
+            pagination = query.paginate(page = current_page, per_page = items_per_page, error_out = True)
 
         if isBought:
             query = query.filter(Product.is_bought == isBought)
+            pagination = query.paginate(page = current_page, per_page = items_per_page, error_out = True)
 
         if minimum_price:
             query = query.filter(Product.price >= minimum_price)
+            pagination = query.paginate(page = current_page, per_page = items_per_page, error_out = True)
 
         if maximum_price:
             query = query.filter(Product.price <= maximum_price)
+            pagination = query.paginate(page = current_page, per_page = items_per_page, error_out = True)
+        
+        pagination = query.paginate(page = current_page, per_page=items_per_page)
 
-        all_products = [ProductItemSchema().dump(product) for product in query.all()]
-        return {"products": all_products}
+        all_products = [ProductItemSchema().dump(product) for product in pagination.items]
+        return {"products": all_products, "current_page" : pagination.page, "no of pages" : pagination.pages}
 
     def post(self):
         # * format = 127.0.0.1:5000/v1/products?seller=<aRandomId>
-        sellerid = check_seller()
+        seller = check_seller()
         try:
             new_product = CreateProductSchema().load(request.json)
-            new_product.seller = sellerid
+            new_product.seller = seller
             database.session.add(new_product)
             database.session.commit()
+            add_productid(seller, productid = new_product.id)
         except ValidationError as err:
             abort(400, err.messages)
 

@@ -14,13 +14,13 @@ For detailed instructions on setting up Cruxnd Store, please refer to our [wiki]
 
 ## Contribution
 
-Feel free to contribute to the repository 🌱. We welcome contributions of all kinds, including bug fixes, feature enhancements, and documentation improvements. To contribute, please follow these steps:
+To contribute, please follow these steps:
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/my-feature`).
-3. Make your changes and commit them (`git commit -am 'Add new feature'`).
-4. Push your changes to your branch (`git push origin feature/my-feature`).
-5. Submit a pull request.
+1. 🍴 Fork the repository.
+2. 🌿 Create a new branch (`git checkout -b feature/my-feature`).
+3. 🔧 Make your changes and commit them (`git commit -am 'Add new feature'`).
+4. ⬆️ Push your changes to your branch (`git push origin feature/my-feature`).
+5. 📩 Submit a pull request.
 
 ## Support
 

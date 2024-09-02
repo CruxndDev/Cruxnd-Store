@@ -1,6 +1,6 @@
 from faker import Faker
 from sqlalchemy.exc import IntegrityError
-from .models import Cart, Seller, User, Product, database
+from .models import Cart, Seller, User, Product, add_productid, database
 import random
 from datetime import datetime
 
@@ -35,7 +35,7 @@ def generate_random_user():
     return random.choice(users)
 
 
-def generate_random_seller():
+def generate_random_seller() -> Seller:
     sellers = Seller.query.all()
     return random.choice(sellers)
 
@@ -72,10 +72,11 @@ def create_products(n):
 
         try:
             seller = generate_random_seller()
-            database.session.add(new_product)
+            database.session.add_all([seller, new_product])
             database.session.commit()
-            seller.add_product(new_product.id)
+            add_productid(seller, new_product.id)
             new_product.seller = seller.id
+            database.session.commit()
             count += 1
         except IntegrityError as err:
             print(err._message)
@@ -89,7 +90,7 @@ def create_carts(n):
         product_length = random.randint(5, 10)
         new_cart = Cart(
             name=f.word(),
-            products_list=random.choices(
+            products=random.choices(
                 [product.id for product in Product.query.all()], k=product_length
             ),
             creator=generate_random_user().id,
