@@ -1,3 +1,4 @@
+# TODO Write buy Endpoint for product
 openapi: 3.0.0
 info:
   title: Cruxnd Store API
@@ -43,7 +44,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProductListSchema'
+                $ref: '#/components/schemas/UserListSchema'
         
         404: 
           description:  Resource not found
@@ -61,6 +62,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateUserSchema'
+      
+      response:
+        200:
+          description: Operation Succesful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
   
   /users/{userID}:
     GET:
@@ -68,7 +77,7 @@ paths:
       operationID: getUser
       response:
         200:
-          description: Resource Found
+          description: Operation Succesful
           content:
             application/json:
               schema:
@@ -86,7 +95,7 @@ paths:
       operationID: deleteUser
       response:
         204:
-          descriprion: Resource Deleted
+          descriprion: Operation Succesful
           content:
             application/json:
               schema:
@@ -104,7 +113,7 @@ paths:
 
       response:
         200:
-          description: Resource Updated
+          description: Operation Succesful
           content:
             application/json:
               schema:
@@ -173,6 +182,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+
+# TODO Continue from here
 
   /products:
     GET:
