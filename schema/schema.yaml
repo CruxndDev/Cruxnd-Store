@@ -1,4 +1,3 @@
-# TODO Write buy Endpoint for product
 openapi: 3.0.0
 info:
   title: Cruxnd Store API
@@ -52,7 +51,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    
+     
     POST:
       tags: users
       operationID: createUser
@@ -70,6 +69,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Success'
+        
+        400:
+          description: Malformed Response
+          content:
+            application/json:
+            schema:
+              $ref: '#/components/schemas/Error'
   
   /users/{userID}:
     GET:
@@ -110,6 +116,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateProductSchema'
+      response:
+        400:
+            description: Malformed Response
+            content:
+              application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
 
       response:
         200:
@@ -139,12 +153,11 @@ paths:
                 $ref: '#/components/schemas/LoginSuccessful'
         
         400:
-          description: Malformed Request #! I am not sure of the error code yet
+          description: Malformed Request 
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  
   /user/{userID}/carts:
     POST:
       tags: users, carts
@@ -162,6 +175,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CartItemSchema'
+        
+        400:
+          description: Malformed Response
+          content:
+            application/json:
+            schema:
+              $ref: '#/components/schemas/Error'
+  
       
   
   /users/{userID}/carts/{cartID}:
@@ -184,7 +205,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 
 
-# TODO Continue from here
 
   /products:
     GET:
@@ -226,11 +246,19 @@ paths:
               $ref: '#/components/schemas/CreateProductItemSchema'
       
       responses:
-        201:
+        204:
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Success'
+      
+        400:
+            description: Malformed Response
+            content:
+              application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
   
   /product/{productID}:
     GET:
@@ -281,6 +309,38 @@ paths:
         
         404:
           description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        
+        400:
+          description: Malformed Response
+          content:
+            application/json:
+            schema:
+              $ref: '#/components/schemas/Error'
+  
+
+    POST:
+      tags: products, users
+      operationID: buyProduct
+      parameters:
+        name: buyerid
+        in: query
+        type: string
+        required: true
+      
+      response:
+        200:
+          description: Operation Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        
+        404:
+          description: Resource Not Found
           content:
             application/json:
               schema:

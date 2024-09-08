@@ -2,6 +2,7 @@ from ..models import Seller
 from ..v1 import api_blueprint, SUCCESS_RESPONSE
 from flask import jsonify
 
+
 # * Controler Resources
 @api_blueprint.route("/sellers/<string:sellerid>/withdraw")
 def withdraw(sellerid):
