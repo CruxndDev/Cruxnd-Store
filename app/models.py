@@ -13,25 +13,27 @@ from app import database
 
 load_dotenv()
 
+
 def add_productid(table, productid):
-        table_name = table.__tablename__
-        connection = psycopg2.connect(
-            user = os.getenv("DEV_DATABASE_USER"),
-            password=os.getenv("DEV_DATABASE_PASSWORD"),
-            database=os.getenv("DEV_DATABASE"),
-        )
+    table_name = table.__tablename__
+    connection = psycopg2.connect(
+        user=os.getenv("DEV_DATABASE_USER"),
+        password=os.getenv("DEV_DATABASE_PASSWORD"),
+        database=os.getenv("DEV_DATABASE"),
+    )
 
-        cursor = connection.cursor()
+    cursor = connection.cursor()
 
-        update_query = """
+    update_query = """
             UPDATE {0} SET products = array_append(products, '{1}') WHERE id = '{2}' 
         """.format(
-            table_name, productid, table.id
-        )
-        print(update_query)
-        cursor.execute(update_query)
-        connection.commit()
-        connection.close()
+        table_name, productid, table.id
+    )
+    print(update_query)
+    cursor.execute(update_query)
+    connection.commit()
+    connection.close()
+
 
 def generate_user_id():
     return str(uuid4())
@@ -80,7 +82,7 @@ class Product(database.Model):
     updated = database.Column(database.DateTime(), nullable=True)
     is_bought = database.Column(database.Boolean(), default=False)
     buyer = database.Column(database.ForeignKey("users.id"), nullable=True)
-    seller = database.Column(database.String(400), database.ForeignKey("sellers.id"))
+    seller = database.Column(database.ForeignKey("sellers.id"))
 
     def __repr__(self) -> str:
         return f"Product {self.name}"
@@ -109,6 +111,7 @@ class Seller(User, database.Model):  # ? Not sure the inheritance will work
             gender=user.gender,
         )
         return new_seller
+
 
 class Cart(database.Model):
 

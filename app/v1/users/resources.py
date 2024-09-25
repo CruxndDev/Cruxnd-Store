@@ -24,8 +24,8 @@ class UserListResource(Resource):
         query = User.query
         username = request.args.get("username")
         email_address = request.args.get("emailAddress")
-        current_page = request.args.get("currentPage", type = int, default = 1)
-        items_per_page = request.args.get("itemsPerPage", type = int, default = 10)
+        current_page = request.args.get("currentPage", type=int, default=1)
+        items_per_page = request.args.get("itemsPerPage", type=int, default=10)
 
         if username and email_address:
             return ERROR_RESPONSE, 400
@@ -107,9 +107,7 @@ class CartListResource(Resource):
         user_to_get = User.query.get_or_404(userid)
 
         if not user_to_get.carts:
-            new_cart = Cart(
-                name=f"{user_to_get} cart", creator=user_to_get
-            )
+            new_cart = Cart(name=f"{user_to_get} cart", creator=user_to_get)
 
             database.session.add(new_cart)
             database.session.commit()

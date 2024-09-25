@@ -28,6 +28,7 @@ class UserItemSchema(CreateUserSchema, Schema):
 class CreateProductSchema(Schema):
     name = fields.String(required=True)
     price = fields.Float(required=True)
+    seller = fields.String(required = False)
 
     @post_load
     def make_product(self, data, **kwargs):
