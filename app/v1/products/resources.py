@@ -1,24 +1,21 @@
 from datetime import datetime
-from typing import NoReturn
 from flask import request, abort
 from flask_restful import Resource
 from ...models import Product, Seller, database, User, add_productid
 from ...schemas import ProductItemSchema, CreateProductSchema
-from app import cache
 from marshmallow import ValidationError
 
 SUCCESS_RESPONSE = {"message": "Operation Successful"}
 NOT_FOUND = {"message": "Resource not found"}
 
 
-def check_seller() -> NoReturn | Seller:
-    seller_id = request.args.get("sellerid")
+def check_seller():
+    seller_id = request.args.get("sellerId")
 
     if not seller_id:
         abort(400, {"message": "seller id is missing"})
     else:
-        return Seller.query.get_or_404(seller_id)
-
+        return Seller.query.get(seller_id)
 
 class ProductsListResource(Resource):
 
@@ -70,12 +67,11 @@ class ProductsListResource(Resource):
 
     def post(self):
         # * format = 127.0.0.1:5000/v1/products?seller=<aRandomId>
-        seller = check_seller()
         try:
             new_product = CreateProductSchema().load(request.json)
-            new_product.seller = seller
             database.session.add(new_product)
             database.session.commit()
+            seller = Seller.query.get(new_product.seller)
             add_productid(seller, productid=new_product.id)
             return SUCCESS_RESPONSE, 201
         except ValidationError as err:
@@ -89,7 +85,6 @@ class ProductItemResource(Resource):
         return {"product": ProductItemSchema().dump(retreived_product)}
 
     def put(self, productid):
-        check_seller()
         product_to_update = Product.query.get_or_404(productid)
         try:
             new_product = CreateProductSchema().load(request.json)

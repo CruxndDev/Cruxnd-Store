@@ -2,7 +2,7 @@ from app import create_app
 
 app = create_app()
 
-
+# TODO Work on JWT implmentation 
 @app.cli.command("test")
 def test():
     import unittest

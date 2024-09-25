@@ -82,7 +82,7 @@ class Product(database.Model):
     updated = database.Column(database.DateTime(), nullable=True)
     is_bought = database.Column(database.Boolean(), default=False)
     buyer = database.Column(database.ForeignKey("users.id"), nullable=True)
-    seller = database.Column(database.String(400), database.ForeignKey("sellers.id"))
+    seller = database.Column(database.ForeignKey("sellers.id"))
 
     def __repr__(self) -> str:
         return f"Product {self.name}"
